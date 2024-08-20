@@ -90,7 +90,6 @@ parso==0.8.4
 pexpect==4.9.0
 pickleshare==0.7.5
 pillow==10.3.0
-pip==24.0
 platformdirs==4.2.2
 plotly==5.22.0
 pooch==1.8.1
