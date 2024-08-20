@@ -271,7 +271,10 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             print("Image projection layer added to the pipe!")
             if os.path.exists(IMG_PROJ_LAYER_WEIGHTS):
                 # Load weights if found
-                layer_weights = torch.load(IMG_PROJ_LAYER_WEIGHTS)
+                if not torch.cuda.is_available():
+                    layer_weights = torch.load(IMG_PROJ_LAYER_WEIGHTS, map_location=torch.device('cpu'))
+                else:
+                    layer_weights = torch.load(IMG_PROJ_LAYER_WEIGHTS)
                 img_project_model.load_state_dict(layer_weights)
                 print("Image projection layer weights have been loaded!")
             else:
