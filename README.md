@@ -110,3 +110,17 @@ Details on each additional parameter that you can list after the training script
 - [ ] Improve the quality of the generated music.
 - [ ] Optimize the overall inference speed of Art2Mus.
 - [ ] Test the impact of image transformations on the final generated music.
+
+## Cite this work
+If you found this repository useful, please consider citing: 
+
+```bibtex
+@inproceedings{
+rinaldi2024artmus,
+title={Art2Mus: Bridging Visual Arts and Music through Cross-Modal Generation},
+author={Ivan Rinaldi and Nicola Fanelli and Gennaro Vessio and Giovanna Castellano},
+booktitle={AI for Visual Arts Workshop and Challenges},
+year={2024},
+url={https://openreview.net/forum?id=YgBIWXVCNf}
+}
+```
