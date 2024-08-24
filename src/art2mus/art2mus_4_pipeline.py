@@ -71,7 +71,7 @@ if is_librosa_available():
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
 TEMP_AUDIO_DIR = PROJ_DIR + "/src/tmp_audios/"
-IMG_PROJ_LAYER_WEIGHTS = PROJ_DIR + "/art2mus_weights/img_proj_layer_4_tok.pt"
+IMG_PROJ_LAYER_WEIGHTS = PROJ_DIR + "/art2mus_weights/art2mus_4_img_proj_layer.pt.pt"
 
 EMBEDS_DTYPE = torch.float16
 ATT_MASK_DTYPE = torch.int64

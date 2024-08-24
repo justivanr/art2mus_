@@ -1,5 +1,4 @@
 """Script with shared constants for most scripts"""
-import os
 from pathlib import Path
 
 # Directory in which the project is stored

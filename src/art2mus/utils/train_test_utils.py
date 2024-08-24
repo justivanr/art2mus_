@@ -26,11 +26,10 @@ from art2mus.utils.imagebind_utils import load_model, generate_embeds, compute_s
 
 
 # Repository containg the model
-REPO_ID = "cvssp/audioldm2"
-REPO_MUSIC_ID = "cvssp/audioldm2-music"
+AUDIOLDM2_REPO_ID = "cvssp/audioldm2"
 
-CUSTOM_PIPE = PROJ_DIR + "/src/art2mus/my_pipeline.py"
-CUSTOM_PIPE_2 = PROJ_DIR + "/src/art2mus/my_pipeline_2.py"
+CUSTOM_PIPE = PROJ_DIR + "/src/art2mus/art2mus_pipeline.py"
+CUSTOM_PIPE_2 = PROJ_DIR + "/src/art2mus/art2mus_4_pipeline.py"
 
 # Data and Src folders
 DATA_FOLDER = PROJ_DIR + "/data/"
@@ -46,38 +45,23 @@ ARTGRAPH_FOLDER = IMAGE_FOLDER + "imagesf2/"
 
 # Extra data folder
 EXTRA_FOLDER = DATA_FOLDER + "extra/"
-OTHER_DATASETS_VERSIONS_FOLDER = EXTRA_FOLDER + "other_datasets_version/"
 
-""" --- Full datasets --- """
-# IMAGE_AUDIO_JSON = EXTRA_FOLDER + "image_audio_df.json"
-# HIST_GEO_DATASET = EXTRA_FOLDER + "loc_img_aud_df.json"
-# EMOTIONAL_DATASET = EXTRA_FOLDER + "art_ag_emot_audio_df.json"
 """ --- Datasets' subsets --- """
 IMAGE_AUDIO_JSON = EXTRA_FOLDER + "image_audio_subset_df.json"
-HIST_GEO_DATASET = EXTRA_FOLDER + "loc_img_aud_subset_df.json"
-EMOTIONAL_DATASET = EXTRA_FOLDER + "art_ag_emot_audio_subset_df.json"
-
-# ArtworkDesc-Music dataset
-ARTW_DESC_MUSIC_DATASET = EXTRA_FOLDER + "artwdesc_music_df.json"
-# Artwork-Dataset Dictionary
-ART_DATASETS_DICT_PATH = EXTRA_FOLDER + "art_datasets_dict.json"
-ART_DATASETS_DICT_SUBSET_PATH = EXTRA_FOLDER + "art_datasets_subset_dict.json"
-
-# Artwork descriptions dataset
-ARTW_DESC_FILE = EXTRA_FOLDER + "data_creation/artw_artwdesc_df.json"
-ARTW_DESC_MUSIC_FILE = EXTRA_FOLDER +  "artwdesc_music_df.json"
 
 # Embeddings' safetensors
 IMAGE_ST = EXTRA_FOLDER + "images.safetensors"
 AUDIO_ST = EXTRA_FOLDER + "audios.safetensors"
 
-# Output folder
-OUT_DIR = SRC_FOLDER + "test_audios/"
+# Validation Generated Music Output folder
 VAL_AUDIO_DIR = SRC_FOLDER + "art2mus/val_audios/"
-TEST_AUDIO_DIR = SRC_FOLDER + "art2mus/test_audios/"
 
-# Model Output folder
-MODEL_OUT_DIR = PROJ_DIR + "/model/"
+# Model Weights Output folder
+MODEL_OUT_DIR = PROJ_DIR + "/art2mus_weights/"
+
+# Image Projection Layer Weights
+IMG_PROJ_LAYER_WEIGHTS = PROJ_DIR + "/art2mus_weights/img_proj_layer.pt"
+TMP_LAYER_WEIGHTS_DIR = PROJ_DIR + "/art2mus_weights/tmp_weights/"
 
 # Logs folder
 LOG_DIR = PROJ_DIR + "/logs/"
@@ -85,18 +69,12 @@ LOG_DIR = PROJ_DIR + "/logs/"
 # Tmp directories
 TMP_GT_DIR = SRC_FOLDER + "art2mus/tmp_ground_truth/"
 TMP_GEN_DIR = SRC_FOLDER + "art2mus/tmp_generated/"
-TEST_GEN_AUDIOS_DIR = SRC_FOLDER + "test_audios/"
 
 # Dtype needed to work with GPU
 EMBEDS_DTYPE = torch.float16
 
 # Negative Prompts
 DEFAULT_NEGATIVE_PROMPT = "Low quality."
-PERSONALIZED_NEGATIVE_PROMPT = "Low quality. Robotic noises."
-
-# Image Projection Layer Weights
-IMG_PROJ_LAYER_WEIGHTS = PROJ_DIR + "/model/img_proj_layer.pt"
-TMP_LAYER_WEIGHTS_DIR = PROJ_DIR + "/model/tmp_weights/"
 
 # VGGISH directory
 TORCH_HUB_DICT = torch.hub.get_dir()

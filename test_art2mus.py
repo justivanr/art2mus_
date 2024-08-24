@@ -6,7 +6,7 @@ sys.path.append("src")
 import conf
 PROJ_DIR = conf.PROJ_DIR
 
-from art2mus.my_pipeline import AudioLDM2Pipeline
+from art2mus.art2mus_pipeline import AudioLDM2Pipeline
 import art2mus.utils.train_test_utils as tu
 
 
@@ -35,7 +35,7 @@ def generate_audio(prompt=None, img_path=None, img_emb=None, neg_prompt="Low qua
 # Output folder
 OUT_DIR = tu.PROJ_DIR
 # Model repo id on HuggingFace
-MODEL_REPO_ID = tu.REPO_ID
+MODEL_REPO_ID = tu.AUDIOLDM2_REPO_ID
 # Seed
 SEED = 0
 # Path of an example artwork to use to generate music

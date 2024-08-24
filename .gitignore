@@ -1,0 +1,5 @@
+*.safetensors
+*.pth
+
+# Avoid pushing wandb logs
+wandb/*
