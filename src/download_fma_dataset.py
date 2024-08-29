@@ -6,8 +6,8 @@ found in the .json file to instantiate the environmental variables below.
 """
 
 import os
-os.environ['KAGGLE_USERNAME'] = "justivanr"
-os.environ['KAGGLE_KEY'] = "7a144ecaf3b17ed4497fb338d02e75ff"
+os.environ['KAGGLE_USERNAME'] = "####"
+os.environ['KAGGLE_KEY'] = "####"
 import sys
 sys.path.append("src")
 import conf
