@@ -63,11 +63,11 @@ else:
 if device == 'cuda':
     print("Loading model with torch.float16, needed to work with GPU.")
     pipe = AudioLDM2Pipeline.from_pretrained(pretrained_model_name_or_path=MODEL_REPO_ID, torch_dtype=torch.float16, 
-                                             custom_pipeline=PROJ_DIR+"/src/art2mus/my_pipeline.py")
+                                             custom_pipeline=PROJ_DIR+"/src/art2mus/art2mus_pipeline.py")
 else:
     print("Loading model without torch.float16, needed to work with CPU.")
     pipe = AudioLDM2Pipeline.from_pretrained(pretrained_model_name_or_path=MODEL_REPO_ID, 
-                                             custom_pipeline=PROJ_DIR+"/src/art2mus/my_pipeline.py")
+                                             custom_pipeline=PROJ_DIR+"/src/art2mus/art2mus_pipeline.py")
     
 pipe = pipe.to(device)
 print(f"Pipeline moved to: {device}!")

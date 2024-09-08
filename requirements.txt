@@ -151,7 +151,6 @@ webdataset==0.2.86
 webencodings==0.5.1
 wget==3.2
 wheel==0.43.0
-xxhash==2.0.2
 yacs==0.1.8
 yarl==1.9.3
 zipp==3.17.0

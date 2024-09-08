@@ -3,3 +3,5 @@
 
 # Avoid pushing wandb logs
 wandb/*
+
+__pycache__/
