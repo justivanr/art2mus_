@@ -72,7 +72,7 @@ if is_librosa_available():
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
 TEMP_AUDIO_DIR = PROJ_DIR + "/src/tmp_audios/"
-IMG_PROJ_LAYER_WEIGHTS = PROJ_DIR + "/art2mus_weights/art2mus_img_proj_layer.pt.pt"
+IMG_PROJ_LAYER_WEIGHTS = PROJ_DIR + "/art2mus_weights/art2mus_img_proj_layer.pt"
 
 EMBEDS_DTYPE = torch.float16
 ATT_MASK_DTYPE = torch.int64
@@ -831,12 +831,12 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             tmp = audio.numpy()
             
             # Load ImageBind
-            imagebind = load_model(False)
+            imagebind = load_model(full_log=False, use_cpu=True)
             
             # Store files so to compute embeddings
             for i in range(len(tmp)):
                 scipy.io.wavfile.write(TEMP_AUDIO_DIR + f"tmp_aud_{i}.wav", rate=16000, data=tmp[i])
-            audio_file = [TEMP_AUDIO_DIR + file for file in os.listdir(TEMP_AUDIO_DIR)]
+            audio_file = [TEMP_AUDIO_DIR + file for file in os.listdir(TEMP_AUDIO_DIR) if '.wav' in file]
             
             # Generate audio embeddings using ImageBind
             audio_emb = generate_embeds(imagebind, audio_paths=audio_file, extract_emb=True, emb_type='audio')
@@ -848,6 +848,10 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             
             # Compute similiarties among embeddings
             tmp_imb_emb = image_emb.reshape(1, -1)
+            
+            if tmp_imb_emb.is_cuda:
+                tmp_imb_emb = tmp_imb_emb.cpu()
+            
             similarities = cosine_similarity(tmp_imb_emb, audio_emb)
         
             # Sort audio_emb indices based on similarity values in descending order
@@ -861,12 +865,12 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             tmp = audio.numpy()
             
             # Load ImageBind
-            imagebind = load_model(False)
+            imagebind = load_model(full_log=False, use_cpu=True)
             
             # Store files so to compute embeddings
             for i in range(len(tmp)):
                 scipy.io.wavfile.write(TEMP_AUDIO_DIR + f"tmp_aud_{i}.wav", rate=16000, data=tmp[i])
-            audio_file = [TEMP_AUDIO_DIR + file for file in os.listdir(TEMP_AUDIO_DIR)]
+            audio_file = [TEMP_AUDIO_DIR + file for file in os.listdir(TEMP_AUDIO_DIR) if '.wav' in file]
             
             # Generate audio and text embeddings using ImageBind
             audio_emb = generate_embeds(imagebind, audio_paths=audio_file, extract_emb=True, emb_type='audio')
@@ -883,6 +887,10 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             
             # Compute similiarties among embeddings
             img_txt_emb = img_txt_emb.reshape(1, -1)
+            
+            if img_txt_emb.is_cuda:
+                img_txt_emb = img_txt_emb.cpu()
+            
             similarities = cosine_similarity(img_txt_emb, audio_emb)
         
             # Sort audio_emb indices based on similarity values in descending order
@@ -1168,11 +1176,15 @@ class AudioLDM2Pipeline(DiffusionPipeline):
         # True if either text or text embedding was given in input, False otherwise
         device = self._execution_device
         is_text_input = not (prompt is None and prompt_embeds is None)
-        use_music_prompt = not (image_embeds is None or image_path is None)
+        
+        # This is the prompt used to aid music generation when only an artwork is provided in input
+        use_artwork_support_prompt = (image_embeds is not None or image_path is not None) and (prompt is None and prompt_embeds is None)
         
         if image_path is not None and image_embeds is None:
-            imagebind = load_model(full_log=False, use_cpu=True)
+            imagebind = load_model(full_log=True, use_cpu=True)
             image_embeds = generate_embeds(imagebind, 'cpu', [image_path], extract_emb=True, emb_type='vision')[0]
+            # Free up RAM space from imagebind model
+            del imagebind
             image_embeds = image_embeds.unsqueeze(0).to(device)
         
         if self.img_project_model.device.type == 'cpu' and device.type == 'cuda':
@@ -1208,26 +1220,8 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             # Image in input
             batch_size = image_embeds.shape[0]
             
-        # If image_embeds have been provided in input, prepare prompt based on batch_size
-        if not is_text_input:
-            prompt = []
-            # Inference with CombinedDataset
-            if artwork_text_datasets is not None:
-                for art_datas in artwork_text_datasets:
-                    if art_datas == "BASIC":
-                        prompt.append(BASIC_DATASET_TEXT)
-                    elif art_datas == "HISTORICAL":
-                        prompt.append(HISTORICAL_DATASET_TEXT)
-                    else:
-                        prompt.append(EMOTIONAL_DATASET_TEXT)
-            else:
-                # Inference with ImageAudioDataset
-                prompt = [BASIC_DATASET_TEXT] * batch_size  
-            
-            if len(prompt) == 1:
-                prompt = prompt[0]
-
-        if use_music_prompt:
+        # If image_embeds have been provided in input, prepare support prompt based on batch_size
+        if use_artwork_support_prompt:
             music_prompt = []
             
             if artwork_text_datasets is not None:
@@ -1310,7 +1304,7 @@ class AudioLDM2Pipeline(DiffusionPipeline):
         # 9. Denoising loop
         num_warmup_steps = len(timesteps) - num_inference_steps * self.scheduler.order
         
-        if use_music_prompt:
+        if use_artwork_support_prompt:
             # Encode music prompt using T5
             input_embeds , attention_mask = self.__encode_music_prompt_t5__(music_prompt, negative_prompt, do_classifier_free_guidance,
                                                                             num_waveforms_per_prompt, batch_size, device)
