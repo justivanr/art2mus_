@@ -95,7 +95,6 @@ class MyAudioLDM2ProjectionModel(ModelMixin, ConfigMixin):
             Dimensionality of the text embeddings from the language model (GPT2).
     """
 
-    """ ##################### MODIFIED THIS METHOD ##################### """
     @register_to_config
     def __init__(self, text_encoder_dim, text_encoder_1_dim, langauge_model_dim):
         super().__init__()
@@ -115,7 +114,6 @@ class MyAudioLDM2ProjectionModel(ModelMixin, ConfigMixin):
         self.sos_embed_2 = nn.Parameter(torch.ones(langauge_model_dim))
         self.eos_embed_2 = nn.Parameter(torch.ones(langauge_model_dim))
 
-    """ ##################### MODIFIED THIS METHOD ##################### """
     def forward(
         self,
         hidden_states: Optional[torch.FloatTensor] = None,

@@ -800,7 +800,6 @@ class AudioLDM2Pipeline(DiffusionPipeline):
         waveform = waveform.cpu().float()
         return waveform
 
-    """ ##################### MODIFIED THIS METHOD ##################### """
     def score_waveforms(self, text, image_emb, audio, num_waveforms_per_prompt, device, dtype):
         if not is_librosa_available():
             logger.info(
@@ -922,7 +921,6 @@ class AudioLDM2Pipeline(DiffusionPipeline):
             extra_step_kwargs["generator"] = generator
         return extra_step_kwargs
 
-    """ ##################### MODIFIED THIS METHOD ##################### """
     def check_inputs(
         self,
         prompt,
@@ -1050,11 +1048,6 @@ class AudioLDM2Pipeline(DiffusionPipeline):
     
         return latents
     
-    """
-    #############################
-    ######### INFERENCE #########
-    #############################
-    """
     @torch.no_grad()
     @replace_example_docstring(EXAMPLE_DOC_STRING)
     def __call__(
@@ -1305,7 +1298,7 @@ class AudioLDM2Pipeline(DiffusionPipeline):
         num_warmup_steps = len(timesteps) - num_inference_steps * self.scheduler.order
         
         if use_artwork_support_prompt:
-            # Encode music prompt using T5
+            # Encode artwork support prompt using T5
             input_embeds , attention_mask = self.__encode_music_prompt_t5__(music_prompt, negative_prompt, do_classifier_free_guidance,
                                                                             num_waveforms_per_prompt, batch_size, device)
         
@@ -1385,11 +1378,6 @@ class AudioLDM2Pipeline(DiffusionPipeline):
 
         return AudioPipelineOutput(audios=audio)
 
-    """
-    ############################
-    ######### TRAINING #########
-    ############################
-    """
     @replace_example_docstring(EXAMPLE_DOC_STRING)
     def __train__(
         self,
@@ -1509,23 +1497,7 @@ class AudioLDM2Pipeline(DiffusionPipeline):
         # 3. Determine if classifier free guidance should be used
         do_classifier_free_guidance = guidance_scale > 1.0
         
-        # 4. Encode text resembling our goal (generate music from artworks)
-        #    If image_embeds have been provided in input, prepare prompt based on batch_size
-        if not is_text_input:
-            prompt = []
-            # Training with CombinedDataset
-            if artwork_text_datasets is not None:
-                for art_datas in artwork_text_datasets:
-                    if art_datas == "BASIC":
-                        prompt.append(BASIC_DATASET_TEXT)
-                    elif art_datas == "HISTORICAL":
-                        prompt.append(HISTORICAL_DATASET_TEXT)
-                    else:
-                        prompt.append(EMOTIONAL_DATASET_TEXT)
-            else:
-                # Training with ImageAudioDataset
-                prompt = [BASIC_DATASET_TEXT] * batch_size  
-                
+        # 4. Prepare prompt(s) that will support artwork-based music generation
         if use_music_prompt:
             music_prompt = []
             
@@ -1539,6 +1511,9 @@ class AudioLDM2Pipeline(DiffusionPipeline):
                         music_prompt.append(EMOTIONAL_DATASET_TEXT)
             else:
                 music_prompt = [BASIC_DATASET_TEXT] * batch_size
+                
+            if len(music_prompt) == 1:
+                music_prompt = music_prompt[0]
             
         if generated_prompt_embeds is None:
             input_embeds, attention_mask, generated_prompt_embeds = self.encode_prompt(
