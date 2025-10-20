@@ -120,13 +120,12 @@ Details on each additional parameter that you can list after the training script
 If you found this repository useful, please consider citing:
 
 ```bibtex
-@misc{rinaldi2024art2musbridgingvisualarts,
-      title={Art2Mus: Bridging Visual Arts and Music through Cross-Modal Generation},
-      author={Ivan Rinaldi and Nicola Fanelli and Giovanna Castellano and Gennaro Vessio},
-      year={2024},
-      eprint={2410.04906},
-      archivePrefix={arXiv},
-      primaryClass={cs.MM},
-      url={https://arxiv.org/abs/2410.04906},
+@inproceedings{rinaldi2024art2mus,
+  title={Art2Mus: Bridging Visual Arts and Music through Cross-Modal Generation},
+  author={Rinaldi, Ivan and Fanelli, Nicola and Castellano, Giovanna and Vessio, Gennaro},
+  booktitle={European Conference on Computer Vision},
+  pages={173--186},
+  year={2024},
+  organization={Springer}
 }
 ```
